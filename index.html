@@ -81,11 +81,55 @@ button.act{flex:1;font-family:inherit;font-size:14.5px;font-weight:700;padding:1
   transition:opacity .25s;z-index:60;max-width:88%;text-align:center;}
 .toast.on{opacity:1;}
 
+.done{position:fixed;inset:0;background:#FCFBF8;z-index:100;display:none;flex-direction:column;}
+.done.on{display:flex;}
+.doneback{font-family:inherit;font-size:14.5px;font-weight:600;color:#5a7448;background:#fff;border:none;
+  border-bottom:1px solid #e6e9e0;text-align:left;padding:14px 16px;
+  padding-top:calc(14px + env(safe-area-inset-top));}
+.donescroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:22px 16px calc(30px + env(safe-area-inset-bottom));}
+.donecard{max-width:520px;margin:0 auto;background:#fff;border:1px solid #e6e9e0;border-radius:18px;
+  padding:26px 22px;text-align:center;box-shadow:0 6px 24px rgba(31,42,25,.06);}
+.donelogo{height:34px;margin:0 auto 16px;display:block;}
+.donekick{font-size:12px;letter-spacing:.14em;font-weight:700;color:#5a7448;text-transform:uppercase;}
+.donemeta{font-size:14px;color:#69745e;margin-top:6px;}
+.donestat{margin:20px 0 6px;display:flex;flex-direction:column;align-items:center;gap:11px;}
+.donering{width:132px;height:132px;border-radius:50%;
+  background:conic-gradient(#5a7448 var(--p,0%),#eceee6 0);
+  display:flex;align-items:center;justify-content:center;position:relative;}
+.donering:before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;background:#fff;}
+.donepct{position:relative;z-index:1;font-size:30px;font-weight:800;color:#3f4a37;}
+.donecount{font-size:15px;font-weight:600;color:#3f4a37;}
+.doneblock{margin-top:18px;text-align:left;}
+.doneall{background:#eef3e8;border:1px solid #cfdcc0;color:#3f5a2c;border-radius:12px;
+  padding:16px;text-align:center;font-size:16px;font-weight:700;}
+.donecheck{display:inline-block;margin-right:6px;font-size:18px;}
+.doneouth{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#b23b1e;font-weight:700;
+  margin:4px 0 10px;}
+.donegrp{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8c9683;font-weight:700;
+  margin:12px 0 6px;}
+.doneitem{font-size:14.5px;color:#3f4a37;padding:9px 12px;background:#fbf1ee;border:1px solid #f0d9d2;
+  border-radius:9px;margin-bottom:6px;}
+.donesum{display:flex;gap:8px;justify-content:center;margin:2px 0 16px;}
+.donesum span{font-size:12.5px;font-weight:700;padding:5px 13px;border-radius:100px;}
+.ds-yes{background:#eef3e8;color:#3f5a2c;border:1px solid #cfdcc0;}
+.ds-no{background:#fbf1ee;color:#b23b1e;border:1px solid #f0d9d2;}
+.ds-no.zero{background:#f4f6f0;color:#8c9683;border-color:#dbe2d3;}
+.donerow{display:flex;align-items:flex-start;gap:10px;padding:9px 11px;border:1px solid #e6e9e0;
+  border-radius:9px;margin-bottom:6px;background:#fff;}
+.donerow.no{background:#fbf1ee;border-color:#f0d9d2;}
+.donetick{flex:0 0 20px;width:20px;height:20px;border-radius:5px;font-size:12px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;margin-top:1px;background:#5a7448;color:#fff;}
+.donerow.no .donetick{background:#fff;border:2px solid #d9a99b;color:#fff;}
+.donetxt{flex:1;font-size:14.5px;color:#3f4a37;line-height:1.35;}
+.donerow.no .donetxt{color:#7a4a3d;}
+.donefoot{margin-top:22px;padding-top:14px;border-top:1px solid #eceee6;font-size:12px;color:#9aa392;line-height:1.6;}
+
 @media print{
   @page{size:A4;margin:12mm 14mm;}
   *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
   body{background:#fff !important;padding:0 !important;}
-  .tabs,.actions,.note,.sheet,.toast,.bar{display:none !important;}
+  .tabs,.actions,.note,.sheet,.toast,.bar,.done{display:none !important;}
   header{border-bottom:2px solid #5a7448;padding:0 0 6mm;margin-bottom:6mm;}
   header img{height:14mm;margin-bottom:4mm;}
   .fields{justify-content:center;gap:14mm;}
@@ -139,7 +183,7 @@ button.act{flex:1;font-family:inherit;font-size:14.5px;font-weight:700;padding:1
 <div class="actions jsonly" id="actions">
   <button class="act reset" onclick="resetAll()">Reset</button>
   <button class="act copy" onclick="openSheet()">Send text</button>
-  <button class="act pdf" onclick="makePDF()">Save PDF</button>
+  <button class="act pdf" onclick="openDone()">Done &#10003;</button>
 </div>
 
 <div class="sheet" id="sheet">
@@ -154,6 +198,23 @@ button.act{flex:1;font-family:inherit;font-size:14.5px;font-weight:700;padding:1
   </div>
 </div>
 <div class="toast" id="toast"></div>
+
+<div class="done" id="done">
+  <button class="doneback" onclick="closeDone()">&#8249; Back to checklist</button>
+  <div class="donescroll">
+    <div class="donecard">
+      <img class="donelogo" id="d-logo" alt="Maison">
+      <div class="donekick" id="d-title">CHECKLIST</div>
+      <div class="donemeta"><span id="d-who">Not named</span> &middot; <span id="d-when"></span></div>
+      <div class="donestat">
+        <div class="donering" id="d-ring"><div class="donepct" id="d-pct">0%</div></div>
+        <div class="donecount" id="d-count">0 of 0 completed</div>
+      </div>
+      <div class="doneblock" id="d-block"></div>
+      <div class="donefoot">Maison &middot; 74 Bold Street, Liverpool<br><span id="d-time"></span></div>
+    </div>
+  </div>
+</div>
 
 <script>
 var DATA={"opening": {"title": "Opening", "groups": [["Opening", ["Unlock premises &amp; deactivate alarm", "Turn on lights", "Turn on music", "Light incense sticks &amp; air out for aroma", "Open shutter", "Turn on coffee machines &amp; grinders", "Prepare coffee station &amp; restock", "Check bar fridge stock", "Bring out bakery items &amp; build display incl. signs", "Organise service area", "Take out tables and chairs", "Check toilets &amp; restock", "Check cutlery stocked &amp; tables set"]]]}, "closing": {"title": "Closing", "groups": [["Bar", ["Backwash coffee machine", "Empty coffee bin", "Fill &amp; label sauces &amp; cold foams", "Day dot perishables &amp; seal", "Stock glasses in bar", "Restock bar (milk, syrups, cups, lids, beans)", "Cover &amp; label baked goods (store in walk-in)", "Clean bakery display glass &amp; service area", "Brush &amp; mop bar area floor", "Check fridge temps logged AM &amp; PM for the full day", "Lights &amp; music off, back door &amp; shutter closed, front door locked top and bottom"]], ["Floor", ["Bring outside tables inside &amp; wipe", "Set tables &amp; flip chairs", "Fill cutlery", "Clean bathroom (refill soap, restock under sink)", "Clean all FOH surfaces &amp; glass", "Brush &amp; mop all FOH floors", "Empty all FOH bins &amp; replace bag", "Restock (blue roll, takeaway packaging etc.)", "Charge iPads and card machines"]]]}, "deep": {"title": "Deep Clean", "groups": [["Bar", ["Clean coffee machine (under grid)", "Empty and clean coffee grinder", "Clean area under coffee machine", "Clean under tiramisu fridge", "Clear bar shelf, dust &amp; glass wipe", "Empty fridge, check dates, clean fridge", "Clean behind fridges &amp; ice machine", "Clear under till, organise &amp; clean", "Deep clean bakery display &amp; display mirrors"]], ["Floor", ["Clean door &amp; outside window ledge", "Clean carpet and doorstep", "Clean all wooden ledges", "Clean all white beam supports", "Clean all detail walls (bleach + toothbrush)", "Clean tile wall under the pass", "Clean chair legs", "Deep clean couches (stains &amp; in between)", "Sanitise the highchairs", "Clean toilet mirror", "Clean bathroom door", "Clean behind the toilet"]]]}}, KEYS=["opening", "closing", "deep"];
@@ -214,6 +275,34 @@ function summary(){
 function strip(s){ return s.replace(/&amp;/g,'&'); }
 function openSheet(){ document.getElementById('out').value=summary();
   document.getElementById('sheet').className='sheet on'; }
+function openDone(){
+  var key=activeKey(), d=DATA[key], m=meta(), c=counts(key);
+  document.getElementById('d-logo').src=document.querySelector('header img').src;
+  document.getElementById('d-title').textContent=d.title.toUpperCase()+' CHECKLIST';
+  document.getElementById('d-who').textContent=m.who;
+  document.getElementById('d-when').textContent=m.when;
+  var pct=c.t?Math.round(c.done/c.t*100):0;
+  document.getElementById('d-ring').style.setProperty('--p',pct+'%');
+  document.getElementById('d-pct').textContent=pct+'%';
+  document.getElementById('d-count').textContent=c.done+' of '+c.t+' completed';
+  var doneN=c.done, outN=c.t-c.done, html='';
+  html+='<div class="donesum"><span class="ds-yes">&#10003; '+doneN+' done</span>'
+      +'<span class="ds-no'+(outN?'':' zero')+'">'+outN+' not done</span></div>';
+  for(var gi=0; gi<d.groups.length; gi++){
+    if(d.groups.length>1) html+='<div class="donegrp">'+d.groups[gi][0]+'</div>';
+    for(var ti=0; ti<d.groups[gi][1].length; ti++){
+      var on=isOn(key,gi,ti);
+      html+='<div class="donerow '+(on?'yes':'no')+'"><span class="donetick">'+(on?'&#10003;':'')+'</span>'
+          +'<span class="donetxt">'+d.groups[gi][1][ti]+'</span></div>';
+    }
+  }
+  document.getElementById('d-block').innerHTML=html;
+  var now=new Date(), hh=('0'+now.getHours()).slice(-2), mn=('0'+now.getMinutes()).slice(-2);
+  document.getElementById('d-time').textContent='Completed '+(m.when||'')+' at '+hh+':'+mn;
+  document.getElementById('done').className='done on';
+  var s=document.querySelector('.donescroll'); if(s) s.scrollTop=0;
+}
+function closeDone(){ document.getElementById('done').className='done'; }
 function closeSheet(){ document.getElementById('sheet').className='sheet'; }
 function doShare(){
   var text=summary();
